@@ -1,14 +1,17 @@
 import requests
-
-BASE_URL = 'http://0.0.0.0:5000'
+import concurrent.futures
 
 def makeRequest(path, token=''):
-	return requests.get(path, headers={'X-Access-Token': token}).json()
+	BASE_URL = 'http://0.0.0.0:5000'
+	link = BASE_URL + path
+	return requests.get(link, headers={'X-Access-Token': token}).json()
 
-accessToken = makeRequest(BASE_URL + '/register')['access_token']
-links = makeRequest(BASE_URL + '/home', accessToken)['link']
+accessToken = makeRequest('/register')['access_token']
+links = makeRequest('/home', accessToken)['link']
 
-for key in links:
-	link = links[key]
+with concurrent.futures.ThreadPoolExecutor() as executor:
+	results = [executor.submit(makeRequest, links[key], accessToken) for key in links]
 
-	print(makeRequest(BASE_URL + link, accessToken))
+	for f in concurrent.futures.as_completed(results):
+		print(f.result())
+		print('_____________')
