@@ -1,5 +1,5 @@
 import requests
-import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor
 
 class Fetcher():
 	
@@ -8,6 +8,7 @@ class Fetcher():
 		self.token = ''
 
 	def __makeRequest(self, path):
+		print('GET', path)
 		link = self.BASE_URL + path
 		return requests.get(link, headers={'X-Access-Token': self.token}).json()
 	
@@ -18,12 +19,12 @@ class Fetcher():
 		self.__authenticate()
 		links = self.__makeRequest('/home')['link']
 
-		with concurrent.futures.ThreadPoolExecutor() as executor:
-			queue = [executor.submit(self.__makeRequest, links[key]) for key in sorted(links.keys(), reverse=True)]
+		with ThreadPoolExecutor() as executor:
+			queue = [executor.submit(self.__makeRequest, links[key]) for key in links]
 			results = []
 
 			while queue:
-				response = queue.pop().result()
+				response = queue.pop(0).result()
 				results.append(response)
 
 				if 'link' in response and 'msg' not in response:
