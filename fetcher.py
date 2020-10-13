@@ -8,7 +8,6 @@ class Fetcher:
     self.token = ''
 
   def __makeRequest(self, path):
-    print('GET', path)
     link = self.BASE_URL + path
     return requests.get(link, headers={'X-Access-Token': self.token}).json()
 
