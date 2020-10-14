@@ -25,8 +25,8 @@ class Fetcher:
     while queue:
       done, queue = wait(queue, return_when=FIRST_COMPLETED)
 
-      for el in done:
-        result = el.result()
+      for future in done:
+        result = future.result()
         results.append(result)
 
         if 'link' in result and 'msg' not in result:
