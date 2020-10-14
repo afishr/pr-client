@@ -2,6 +2,7 @@
 
 ## How To Launch
 
+1. Start Docker container with `$ docker-compose up -d`
 1. Install dependencies with `$ pip install -r requirements.txt`
 1. Launch with `$ python main.py`
 1. Wait for the message confirming that TCP has been started
