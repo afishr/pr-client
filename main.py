@@ -1,8 +1,55 @@
+import socket
 from fetcher import Fetcher
 from parser import Parser
 from store import Store
+from concurrent.futures import ThreadPoolExecutor
 
-def main():
+def serve(port):
+  server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+  server.bind(('', port))
+  server.listen(5)
+  print('Server is listening on port', port)
+
+  executor = ThreadPoolExecutor(max_workers=6)
+  while True:
+    client, address = server.accept()
+    executor.submit(processRequest, client, address)
+
+def processRequest(client, address):
+  try:
+    print('Connected: ', address)
+
+    while True:
+      query = client.recv(1024)
+
+      if not query:
+        break
+
+      client.sendall(query)
+      parseQuery(query.decode())
+
+  finally:
+    client.close()
+
+def parseQuery(query):
+  query = query.replace('\n', '').split(' ')
+  command = query[0].lower()
+
+  if command == 'selectcolumn':
+    try:
+      args = query[1]
+    except IndexError:
+      return False
+
+    args = args.split(',')
+
+    print(store.selectColumns(args))
+  else:
+    return False
+
+
+if __name__ == "__main__":
   results = Fetcher('http://localhost:5000').fetch()
   store = Store()
 
@@ -21,8 +68,4 @@ def main():
     else:
       store.adds(Parser.parseJSON(data))
 
-  print(store.selectColumns(['first_name', 'last_name','email']))
-
-
-if __name__ == "__main__":
-  main()
+  serve(8881)
