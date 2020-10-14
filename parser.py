@@ -13,11 +13,11 @@ class Parser:
 
   @staticmethod
   def parseXML(raw):
-    return json.dumps(xmltodict.parse(raw)['dataset']['record'])
+    return json.loads(json.dumps(xmltodict.parse(raw)['dataset']['record']))
 
   @staticmethod
   def parseJSON(raw):
-    return json.dumps(Parser.__clean_json(raw))
+    return Parser.__clean_json(raw)
 
   @staticmethod
   def parseYAML(raw):
