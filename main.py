@@ -2,13 +2,14 @@ import socket
 from fetcher import Fetcher
 from parser import Parser
 from store import Store
+from display import Display
 from concurrent.futures import ThreadPoolExecutor
 
 def serve(port):
   server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
   server.bind(('', port))
-  server.listen(5)
+  server.listen(6)
   print('Server is listening on port', port)
 
   executor = ThreadPoolExecutor(max_workers=6)
@@ -18,21 +19,26 @@ def serve(port):
 
 def processRequest(client, address):
   try:
-    print('Connected: ', address)
+    print('Connected', address)
 
     while True:
+      client.sendall(b'> ')
       query = client.recv(1024)
-
       if not query:
         break
 
-      client.sendall(query)
-      parseQuery(query.decode())
+      res = processQuery(query.decode())
+      if res:
+        res = res + '\n\n'
+        client.sendall(res.encode())
+      else:
+        client.sendall(b'Invalid request\n\n')
 
+    print('Disconnected', address)
   finally:
     client.close()
 
-def parseQuery(query):
+def processQuery(query):
   query = query.replace('\n', '').split(' ')
   command = query[0].lower()
 
@@ -43,8 +49,9 @@ def parseQuery(query):
       return False
 
     args = args.split(',')
+    args = list(filter(lambda element: element, args))
 
-    print(store.selectColumns(args))
+    return Display.getTableString(store.selectColumns(args))
   else:
     return False
 
