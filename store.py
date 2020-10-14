@@ -15,4 +15,13 @@ class Store:
     for element in self.__list:
       if name in element:
         results.append(element[name])
+      else:
+        results.append(None)
+    return {name : results}
+
+  def selectColumns(self, names):
+    results = {}
+    for name in names:
+      results.update(self.selectColumn(name))
     return results
+

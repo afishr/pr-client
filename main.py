@@ -21,7 +21,7 @@ def main():
     else:
       store.adds(Parser.parseJSON(data))
 
-  print(store.selectColumn('first_name'))
+  print(store.selectColumns(['first_name', 'last_name','email']))
 
 
 if __name__ == "__main__":
