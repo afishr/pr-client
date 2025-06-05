@@ -18,9 +18,16 @@ class Server:
     print('$ netcat localhost', port)
 
     executor = ThreadPoolExecutor(max_workers=6)
-    while True:
-      client, address = server.accept()
-      executor.submit(self.processRequest, client, address)
+    try:
+        while True:
+            client, address = server.accept()
+            executor.submit(self.processRequest, client, address)
+    except KeyboardInterrupt:
+        print("\nShutting down server gracefully...")
+    finally:
+        server.close()
+        executor.shutdown(wait=True)
+        print("Server stopped.")
 
   def processRequest(self, client, address):
     try:
