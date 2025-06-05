@@ -57,7 +57,7 @@ def processQuery(query):
 
 
 if __name__ == "__main__":
-  results = Fetcher('http://localhost:5000').fetch()
+  results = Fetcher('http://localhost:3001').fetch()
   store = Store()
 
   for element in results:
