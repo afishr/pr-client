@@ -10,7 +10,7 @@ def serve(port):
   server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
   server.bind(('', port))
   server.listen(6)
-  print('Server is listening on port', port)
+  print('$ netcat localhost', port)
 
   executor = ThreadPoolExecutor(max_workers=6)
   while True:

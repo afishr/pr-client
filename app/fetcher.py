@@ -8,7 +8,7 @@ class Fetcher:
   def __init__(self, baseUrl):
     self.BASE_URL = baseUrl
     self.token = ''
-    self.cache = Cache('./tmp/cache/')
+    self.cache = Cache('tmp/cache')
 
   def __makeRequest(self, path):
     link = self.BASE_URL + path
