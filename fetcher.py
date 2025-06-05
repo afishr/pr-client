@@ -9,7 +9,13 @@ class Fetcher:
 
   def __makeRequest(self, path):
     link = self.BASE_URL + path
-    return requests.get(link, headers={'X-Access-Token': self.token}).json()
+    response = requests.get(link, headers={'X-Access-Token': self.token})
+
+    if response.headers.get('Content-Type') == 'application/json':
+        return response.json()
+    else:
+        raise ValueError("Expected JSON but got something else: " + response.text)
+
 
   def __authenticate(self):
     self.token = self.__makeRequest('/register')['access_token']
