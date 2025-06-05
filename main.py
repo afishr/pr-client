@@ -51,7 +51,12 @@ def processQuery(query):
     args = args.split(',')
     args = list(filter(lambda element: element, args))
 
-    return Display.getTableString(store.selectColumns(args))
+    if '*' in args:
+      storedData = store.selectAllColumns()
+    else:
+      storedData = store.selectColumns(args)
+
+    return Display.getTableString(storedData)
   else:
     return False
 

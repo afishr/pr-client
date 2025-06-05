@@ -17,7 +17,7 @@ class Store:
         results.append(element[name])
       else:
         results.append(None)
-    return {name : results}
+    return {name: results}
 
   def selectColumns(self, names):
     results = {}
@@ -25,3 +25,10 @@ class Store:
       results.update(self.selectColumn(name))
     return results
 
+  def selectAllColumns(self):
+    columnNames = set()
+
+    for entry in self.__list:
+      columnNames = columnNames | set(list(entry.keys()))
+
+    return self.selectColumns(list(columnNames))
