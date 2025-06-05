@@ -1,3 +1,4 @@
+import time
 import requests
 from parser import Parser
 from diskcache import Cache
@@ -36,6 +37,8 @@ class Fetcher:
     queue = [executor.submit(self.__makeRequest, base,
                              links[key], token) for key in links]
 
+    perfStart = time.perf_counter()
+
     while queue:
       done, queue = wait(queue, return_when=FIRST_COMPLETED)
 
@@ -48,6 +51,9 @@ class Fetcher:
           for key in links:
             queue.add(executor.submit(
               self.__makeRequest, base, links[key], token))
+
+    perfEnd = time.perf_counter()
+    print(f"Fetch time: {perfEnd - perfStart:.4f} seconds")
 
   def processAndSave(self, raw):
     data = raw['data']
