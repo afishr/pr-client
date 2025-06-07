@@ -1,7 +1,7 @@
 class Store:
 
-  def __init__(self):
-    self.__list = []
+  def __init__(self, init_list=[]):
+    self.__list = init_list
 
   def add(self, data):
     self.__list.append(data)

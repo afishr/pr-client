@@ -43,8 +43,6 @@ class Fetcher:
     self.__authenticate()
     links = self.__makeRequest('/home')['link']
 
-    perfStart = time.perf_counter()
-
     for path in links.values():
       self.queue.put(path)
 
@@ -81,7 +79,7 @@ class Fetcher:
         data = self.__makeRequest(path)
 
         with self.lock:
-          self.result.append(self.parse(data))
+          self.result = self.result + self.parse(data)
 
         if 'link' in data and 'msg' not in data:
           for key in data['link']:
