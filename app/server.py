@@ -54,7 +54,7 @@ class Server:
     query = query.replace('\n', '').split(' ')
     command = query[0].lower()
 
-    if command == 'selectcolumn':
+    if command == 'select':
       try:
         args = query[1]
       except IndexError:
